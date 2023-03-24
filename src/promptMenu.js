@@ -1,7 +1,9 @@
+// import node modules
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const cTable = require("console.table");
 
+//Create mysql connection to local host
 const db = mysql.createConnection(
 	{
 		host: "localhost",
@@ -12,6 +14,7 @@ const db = mysql.createConnection(
 	console.log(`Connected to the work_db database.`)
 );
 
+//Prompt menu function
 function promptMenu() {
 	inquirer
 		.prompt([
@@ -30,8 +33,10 @@ function promptMenu() {
 			},
 		])
 		.then((answer) => {
+			//switch case method
 			switch (answer.action) {
 				case "View all departments":
+					//SELECT statement to see all department using *
 					db.query("SELECT * FROM departments", (err, result) => {
 						if (err) {
 							console.log(err);
@@ -41,6 +46,8 @@ function promptMenu() {
 					});
 					break;
 				case "View all roles":
+					// Select roles id and connect to department id
+					//Join roles and department together
 					db.query(
 						"SELECT roles.id, roles.title, departments.name AS department, roles.salary  FROM roles JOIN departments on roles.department_id = departments.id",
 						(err, result) => {
@@ -53,6 +60,7 @@ function promptMenu() {
 					);
 					break;
 				case "View all employees":
+					//join roles table to employees table
 					db.query(
 						`SELECT employee.id,employee.first_name,employee.last_name,roles.title,departments.name AS department, roles.salary, CONCAT(m.first_name," ", m.last_name) AS manger
             FROM employee 
@@ -78,6 +86,7 @@ function promptMenu() {
 							},
 						])
 						.then((answer) => {
+							//Use Insert to add new department
 							db.query(
 								"INSERT INTO departments SET ?",
 								{
@@ -94,6 +103,7 @@ function promptMenu() {
 						});
 					break;
 				case "Add a role":
+					// grab name and id from department to add the role into
 					db.query("SELECT id, name FROM departments", (err, results) => {
 						if (err) {
 							console.log(err);
@@ -116,6 +126,7 @@ function promptMenu() {
 									type: "input",
 									name: "salary",
 									message: "What is the salary for this role?",
+									//check to see if user input is a number
 									validate: function (value) {
 										var valid = !isNaN(parseFloat(value));
 										return valid || "Please enter a number";
@@ -148,6 +159,7 @@ function promptMenu() {
 					});
 					break;
 				case "Add an employee":
+					//Grab all employees first & last name for manager selection
 					db.query(
 						`SELECT CONCAT(employee.first_name, " ", employee.last_name) AS fullName, roles.id, roles.title FROM employee LEFT JOIN roles ON employee.role_id = roles.id `,
 						function (err, results) {
@@ -221,6 +233,7 @@ function promptMenu() {
 					);
 					break;
 				case "Update an employee role":
+					// Select all employee and roles for user to select to update
 					db.query(
 						`SELECT employee.id, CONCAT(employee.first_name," ", employee.last_name) AS fullName, roles.title FROM employee JOIN roles ON employee.id =roles.id`,
 						function (err, result) {
@@ -252,6 +265,7 @@ function promptMenu() {
 									},
 								])
 								.then((answer) => {
+									//Update database for employee table
 									db.query(
 										`UPDATE employee SET role_id = ? WHERE id = ?`,
 										[answer.updateRole, answer.employeeName],
@@ -274,4 +288,5 @@ function promptMenu() {
 		});
 }
 
+//export promptMenu for other files to import and use
 module.exports = promptMenu;
