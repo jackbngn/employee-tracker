@@ -24,7 +24,7 @@ DB_NAME=your_database_name
 
 Demo video
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=kufGeEIQr2c" frameborder="0" allowfullscreen></iframe>
+[![Alt text](https://img.youtube.com/vi/kufGeEIQr2c/0.jpg)](https://www.youtube.com/watch?v=kufGeEIQr2c)
 
 ## Questions
 
