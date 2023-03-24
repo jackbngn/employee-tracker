@@ -2,14 +2,15 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const cTable = require("console.table");
+require("dotenv").config();
 
 //Create mysql connection to local host
 const db = mysql.createConnection(
 	{
 		host: "localhost",
-		user: "root",
-		password: "jackbao1",
-		database: "work_db",
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_NAME,
 	},
 	console.log(`Connected to the work_db database.`)
 );
@@ -29,6 +30,7 @@ function promptMenu() {
 					"Add a role",
 					"Add an employee",
 					"Update an employee role",
+					"Done",
 				],
 			},
 		])
@@ -280,6 +282,11 @@ function promptMenu() {
 								});
 						}
 					);
+					break;
+				case "Done":
+					console.log("Exiting application");
+					process.exit(0);
+				default:
 					break;
 			}
 		})
